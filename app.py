@@ -11,6 +11,7 @@ from database.models.user import User, UserView
 from database.models.region import Region, RegionView
 from database.models.user_region import UserRegion, UserRegionView
 from database.models.evacuation_requests import EvacuationRequestView, EvacuationRequest
+from database.models.request import Request, RequestView
 
 app = Flask(__name__)
 logger = logging.getLogger(__name__)
@@ -29,6 +30,7 @@ admin.add_view(UserView(User, current_session))
 admin.add_view(RegionView(Region, current_session))
 admin.add_view(UserRegionView(UserRegion, current_session))
 admin.add_view(EvacuationRequestView(EvacuationRequest, current_session))
+admin.add_view(RequestView(Request, current_session))
 
 if __name__ == '__main__':
     from gevent.pywsgi import WSGIServer

@@ -76,15 +76,52 @@ class MainKeyboards:
 
 
 class EvacuationKeyboards:
-
     @staticmethod
     def evacuation_for_who():
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_me'), callback_data='for_me'),
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_me'), callback_data='evacuation_for_me'),
             ],
             [
-                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_other'), callback_data='for_other'),
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_other'), callback_data='evacuation_for_other'),
+            ]
+        ])
+        return keyboard
+
+
+class RequestKeyboards:
+
+    @staticmethod
+    def select_type(types: list[str]):
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[])
+        for type in types:
+            keyboard.inline_keyboard.append([
+                InlineKeyboardButton(text=type, callback_data=type)
+            ])
+        return keyboard
+
+    @staticmethod
+    def select_delivery_type():
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text=ua_config.get('request_prompts', 'pickup'), callback_data='pickup'),
+            ],
+            [
+                InlineKeyboardButton(text=ua_config.get('request_prompts', 'delivery'), callback_data='delivery'),
+            ]
+        ])
+        return keyboard
+
+    @staticmethod
+    def request_for_who():
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_me'),
+                                     callback_data='request_for_me'),
+            ],
+            [
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_other'),
+                                     callback_data='request_for_other'),
             ]
         ])
         return keyboard

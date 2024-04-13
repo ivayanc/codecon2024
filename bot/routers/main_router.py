@@ -17,10 +17,12 @@ from database.models.user_region import UserRegion
 from database.models.region import Region
 
 from bot.routers.evacuation_router import evacuation_router
+from bot.routers.request_router import request_router
 
 from configuration import ua_config
 
 main_router = Router()
+main_router.include_router(request_router)
 main_router.include_router(evacuation_router)
 
 
