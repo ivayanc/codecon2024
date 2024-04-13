@@ -48,3 +48,12 @@ class MainKeyboards:
             ]
         ])
         return keyboard
+
+    @staticmethod
+    def region_keyboard(regions: list[tuple]):
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[])
+        for region_id, region_name in regions:
+            keyboard.inline_keyboard.append([
+                InlineKeyboardButton(text=region_name, callback_data=str(region_id))
+            ])
+        return keyboard

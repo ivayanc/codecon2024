@@ -9,7 +9,7 @@ from configuration import DB_URL, ADMIN_PANEL_SECRET_KEY, ADMIN_PANEL_BASIC_AUTH
 from database.base import current_session
 from database.models.user import User, UserView
 from database.models.region import Region, RegionView
-
+from database.models.user_region import UserRegion, UserRegionView
 
 app = Flask(__name__)
 logger = logging.getLogger(__name__)
@@ -26,6 +26,7 @@ basic_auth = BasicAuth(app)
 
 admin.add_view(UserView(User, current_session))
 admin.add_view(RegionView(Region, current_session))
+admin.add_view(UserRegionView(UserRegion, current_session))
 
 if __name__ == '__main__':
     from gevent.pywsgi import WSGIServer

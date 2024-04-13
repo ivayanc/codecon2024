@@ -10,8 +10,11 @@ from aiogram.fsm.context import FSMContext
 
 from bot.utils.keyboards import MainKeyboards
 from bot.states.profile_managment import RegisterForm
+from bot.utils.database import get_regions
 from database.base import session
 from database.models.user import User
+from database.models.user_region import UserRegion
+from database.models.region import Region
 
 from configuration import ua_config
 
@@ -51,15 +54,27 @@ async def process_manage_profile_reply(message: Message, state: FSMContext):
     ).format(data=message.text), reply_markup=MainKeyboards.validate_keyboard())
 
 
+@main_router.callback_query(RegisterForm.region)
+async def process_region_selection(call: CallbackQuery, state: FSMContext):
+    await state.update_data(region=int(call.data))
+    await state.set_state(RegisterForm.city)
+    text = ua_config.get('registration', 'enter_city')
+    await call.message.edit_reply_markup(reply_markup=None)
+    await call.bot.send_message(chat_id=call.message.chat.id,
+                                text=text)
+
+
 @main_router.message(RegisterForm.share_phone_number)
 async def process_manage_profile_reply(message: Message, state: FSMContext):
     if not message.contact:
         await message.bot.send_message('Please use keyboard')
     else:
+        regions = await get_regions()
         await state.update_data(phone_number=message.contact.phone_number)
         await state.set_state(RegisterForm.region)
         await message.reply(
-            ua_config.get('registration', 'enter_region')
+            ua_config.get('registration', 'enter_region'),
+            reply_markup=MainKeyboards.region_keyboard(regions)
         )
 
 
@@ -84,10 +99,6 @@ async def process_validate_callback(call: CallbackQuery, state: FSMContext) -> N
         text = ua_config.get('registration', 'share_phone_number')
         reply_markup = MainKeyboards.share_contact_keyboard()
         new_message = True
-    elif current_state == RegisterForm.region.state:
-        await state.update_data(region=data.get('reply_info'))
-        await state.set_state(RegisterForm.city)
-        text = ua_config.get('registration', 'enter_city')
     elif current_state == RegisterForm.city.state:
         await state.update_data(city=data.get('reply_info'))
         await state.set_state(RegisterForm.street)
@@ -109,16 +120,20 @@ async def process_validate_callback(call: CallbackQuery, state: FSMContext) -> N
         with session() as s:
             telegram_id = call.from_user.id
             user = s.query(User).filter(User.telegram_id == telegram_id).first()
+            user_region = UserRegion(
+                user=user,
+                region_id=int(data.get('region', 0))
+            )
             user.phone_number = data.get('phone_number')
             user.first_name = data.get('first_name')
             user.last_name = data.get('last_name')
-            user.region = data.get('region')
             user.city = data.get('city')
             user.street = data.get('street')
             user.house_number = data.get('house_number')
             user.flat_number = data.get('flat_number')
             user.birthday_date = date_to_save
             s.add(user)
+            s.add(user_region)
             s.commit()
         text = ua_config.get('registration', 'registration_complete')
         reply_markup = None
