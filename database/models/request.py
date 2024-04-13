@@ -19,7 +19,7 @@ class Request(Base):
     region = relationship("Region")
     region_id: Mapped[int] = mapped_column(sa.ForeignKey("region.region_id"))
     user = relationship("User")
-    user_id: Mapped[int] = mapped_column(sa.ForeignKey("user.telegram_id"))
+    user_id: Mapped[int] = mapped_column(sa.ForeignKey("users.telegram_id"))
     city: Mapped[str]
     street: Mapped[str]
     home_number: Mapped[int]
@@ -30,10 +30,10 @@ class Request(Base):
     contact_phone_number: Mapped[Optional[str]]
     request_text: Mapped[str]
     volunteer = relationship("User")
-    volunteer_id: Mapped[Optional[int]] = mapped_column(sa.ForeignKey("volunteer.telegram_id"))
+    volunteer_id: Mapped[Optional[int]] = mapped_column(sa.ForeignKey("users.telegram_id"))
     request_status: Mapped[RequestStatus]
     request_date: Mapped[datetime]
-    request_delivery_date: [Optional[datetime]]
+    request_delivery_date: Mapped[Optional[datetime]]
 
     def __repr__(self):
         return f'< Request: {self.request_id}, User: {self.user_id} ' \

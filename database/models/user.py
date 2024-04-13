@@ -21,7 +21,6 @@ class User(Base):
     first_name: Mapped[Optional[str]]
     last_name: Mapped[Optional[str]]
     birthday_date: Mapped[Optional[date]]
-    region: Mapped[Optional[str]]
     city: Mapped[Optional[str]]
     street: Mapped[Optional[str]]
     house_number: Mapped[Optional[str]]

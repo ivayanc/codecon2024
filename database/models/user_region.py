@@ -14,10 +14,11 @@ from configuration import ADMIN_PANEL_PAGE_SIZE
 
 class UserRegion(Base):
     __tablename__ = 'user_region'
+    id: Mapped[int] = mapped_column(sa.BigInteger(), primary_key=True)
     region = relationship("Region")
     region_id: Mapped[int] = mapped_column(sa.ForeignKey("region.region_id"))
     user = relationship("User")
-    user_id: Mapped[int] = mapped_column(sa.ForeignKey("user.telegram_id"))
+    user_id: Mapped[int] = mapped_column(sa.ForeignKey("users.telegram_id"))
     volunteer_region: Mapped[bool] = mapped_column(default=False)
 
     def __repr__(self):
