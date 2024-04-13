@@ -8,7 +8,6 @@ from flask_admin.contrib.sqla import ModelView
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from datetime import date, datetime
 from database.base import Base
 
 from configuration import ADMIN_PANEL_PAGE_SIZE
@@ -36,12 +35,8 @@ class User(Base):
 
 
 class UserView(ModelView):
-    column_list = ('telegram_id', 'username', 'first_name', 'last_name', 'birth_date',
-                   'phone_number', 'city', 'street', 'home_number',
-                   'flat_number', 'is_banned', 'is_volunteer', 'is_admin')
+    column_list = ('telegram_id', 'username', 'phone_number', 'is_banned', 'is_volunteer', 'is_admin')
     form_columns = ('telegram_id', 'username', 'phone_number', 'is_banned', 'is_volunteer')
-    column_searchable_list = ['telegram_id', 'username', 'first_name', 'last_name',
-                              'birth_date', 'phone_number', 'city', 'street',
-                              'home_number', 'flat_number']
+    column_searchable_list = ['telegram_id', 'username', 'phone_number']
     column_filters = ['is_banned', 'is_volunteer', 'is_admin']
     page_size = ADMIN_PANEL_PAGE_SIZE

@@ -17,7 +17,7 @@ class UserRegion(Base):
     region = relationship("Region")
     region_id: Mapped[int] = mapped_column(sa.ForeignKey("region.region_id"))
     user = relationship("User")
-    user_id: Mapped[int] = mapped_column(sa.ForeignKey("users.telegram_id"))
+    user_id: Mapped[int] = mapped_column(sa.ForeignKey("user.telegram_id"))
     volunteer_region: Mapped[bool] = mapped_column(default=False)
 
     def __repr__(self):
