@@ -100,7 +100,7 @@ async def finish_request(message: Message, state: FSMContext):
 
     await message.bot.send_message(
         chat_id=message.chat.id,
-        text='Fine'
+        text=ua_config.get('evacuation_prompts', 'request_accepted')
     )
     await state.clear()
 
