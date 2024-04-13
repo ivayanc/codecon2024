@@ -22,6 +22,8 @@ from database.models.user import User
 from database.models.region import Region
 from database.models.request import Request
 from database.models.user_region import UserRegion
+from database.models.evacuation_requests import EvacuationRequest
+
 target_metadata = Base.metadata
 
 config.set_main_option('sqlalchemy.url', DB_URL)

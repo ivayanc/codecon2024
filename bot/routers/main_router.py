@@ -16,9 +16,12 @@ from database.models.user import User
 from database.models.user_region import UserRegion
 from database.models.region import Region
 
+from bot.routers.evacuation_router import evacuation_router
+
 from configuration import ua_config
 
 main_router = Router()
+main_router.include_router(evacuation_router)
 
 
 async def send_welcome_message(message: Message, edit_message: bool = False) -> None:
@@ -108,7 +111,7 @@ async def process_validate_callback(call: CallbackQuery, state: FSMContext) -> N
         await state.set_state(RegisterForm.house_number)
         text = ua_config.get('registration', 'enter_house_number')
     elif current_state == RegisterForm.house_number.state:
-        await state.update_data(street=data.get('reply_info'))
+        await state.update_data(house_number=data.get('reply_info'))
         await state.set_state(RegisterForm.flat_number)
         text = ua_config.get('registration', 'enter_flat_number')
     elif current_state == RegisterForm.flat_number.state:
@@ -130,7 +133,7 @@ async def process_validate_callback(call: CallbackQuery, state: FSMContext) -> N
             user.city = data.get('city')
             user.street = data.get('street')
             user.house_number = data.get('house_number')
-            user.flat_number = data.get('flat_number')
+            user.flat_number = data.get('reply_info')
             user.birthday_date = date_to_save
             s.add(user)
             s.add(user_region)

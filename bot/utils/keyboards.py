@@ -61,3 +61,30 @@ class MainKeyboards:
                 InlineKeyboardButton(text=region_name, callback_data=str(region_id))
             ])
         return keyboard
+
+    @staticmethod
+    def yes_no_keyboard():
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text=ua_config.get('yes_no', 'yes'), callback_data='yes'),
+                    InlineKeyboardButton(text=ua_config.get('yes_no', 'no'), callback_data='no'),
+                ]
+            ],
+        )
+        return keyboard
+
+
+class EvacuationKeyboards:
+
+    @staticmethod
+    def evacuation_for_who():
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_me'), callback_data='for_me'),
+            ],
+            [
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_other'), callback_data='for_other'),
+            ]
+        ])
+        return keyboard

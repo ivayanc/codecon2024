@@ -1,8 +1,8 @@
 """Add extra models
 
-Revision ID: 0ffd7cc1420e
+Revision ID: 71ad635e746d
 Revises: 77f0cae9026c
-Create Date: 2024-04-13 14:59:58.989641
+Create Date: 2024-04-13 19:31:02.583958
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0ffd7cc1420e'
+revision: str = '71ad635e746d'
 down_revision: Union[str, None] = '77f0cae9026c'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,10 +25,32 @@ def upgrade() -> None:
     sa.Column('region_name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('region_id')
     )
+    op.create_table('evacuation_request',
+    sa.Column('request_id', sa.BigInteger(), nullable=False),
+    sa.Column('region_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.BigInteger(), nullable=False),
+    sa.Column('city', sa.String(), nullable=False),
+    sa.Column('street', sa.String(), nullable=False),
+    sa.Column('home_number', sa.String(), nullable=False),
+    sa.Column('flat_number', sa.String(), nullable=False),
+    sa.Column('contact_first_name', sa.String(), nullable=True),
+    sa.Column('contact_last_name', sa.String(), nullable=True),
+    sa.Column('contact_phone_number', sa.String(), nullable=True),
+    sa.Column('any_special_needs', sa.Boolean(), nullable=False),
+    sa.Column('special_needs', sa.String(), nullable=True),
+    sa.Column('volunteer_id', sa.BigInteger(), nullable=True),
+    sa.Column('request_status', sa.Enum('created', 'taken_by_volunteer', 'details_arranged', 'evacuation_ended', 'rated_and_ended', name='evacuationrequeststatus'), nullable=False),
+    sa.Column('request_date', sa.DateTime(), nullable=False),
+    sa.Column('evacuation_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['region_id'], ['region.region_id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.telegram_id'], ),
+    sa.ForeignKeyConstraint(['volunteer_id'], ['users.telegram_id'], ),
+    sa.PrimaryKeyConstraint('request_id')
+    )
     op.create_table('request',
     sa.Column('request_id', sa.BigInteger(), nullable=False),
     sa.Column('region_id', sa.BigInteger(), nullable=False),
-    sa.Column('user_id', sa.BigInteger(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('city', sa.String(), nullable=False),
     sa.Column('street', sa.String(), nullable=False),
     sa.Column('home_number', sa.Integer(), nullable=False),
@@ -38,7 +60,7 @@ def upgrade() -> None:
     sa.Column('contact_last_name', sa.String(), nullable=True),
     sa.Column('contact_phone_number', sa.String(), nullable=True),
     sa.Column('request_text', sa.String(), nullable=False),
-    sa.Column('volunteer_id', sa.BigInteger(), nullable=True),
+    sa.Column('volunteer_id', sa.Integer(), nullable=True),
     sa.Column('request_status', sa.Enum('created', 'taken_by_volunteer', 'partially_fulfilled', 'completely_fulfilled', 'delivered', 'accepted_by_user', 'rated_and_ended', name='requeststatus'), nullable=False),
     sa.Column('request_date', sa.DateTime(), nullable=False),
     sa.Column('request_delivery_date', sa.DateTime(), nullable=True),
@@ -65,5 +87,10 @@ def downgrade() -> None:
     op.add_column('users', sa.Column('region', sa.VARCHAR(), autoincrement=False, nullable=True))
     op.drop_table('user_region')
     op.drop_table('request')
+    op.drop_table('evacuation_request')
     op.drop_table('region')
+    sa.Enum('created', 'taken_by_volunteer', 'partially_fulfilled', 'completely_fulfilled', 'delivered',
+            'accepted_by_user', 'rated_and_ended', name='requeststatus').drop(op.get_bind(), checkfirst=False)
+    sa.Enum('created', 'taken_by_volunteer', 'details_arranged', 'evacuation_ended', 'rated_and_ended',
+            name='evacuationrequeststatus').drop(op.get_bind(), checkfirst=False)
     # ### end Alembic commands ###
