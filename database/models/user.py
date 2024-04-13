@@ -1,5 +1,7 @@
 from typing import Optional
 
+from datetime import date
+
 import sqlalchemy as sa
 
 from flask_admin.contrib.sqla import ModelView
@@ -17,6 +19,14 @@ class User(Base):
     telegram_id: Mapped[int] = mapped_column(sa.BigInteger(), primary_key=True)
     username: Mapped[Optional[str]]
     phone_number: Mapped[Optional[str]]
+    first_name: Mapped[Optional[str]]
+    last_name: Mapped[Optional[str]]
+    birthday_date: Mapped[Optional[date]]
+    region: Mapped[Optional[str]]
+    city: Mapped[Optional[str]]
+    street: Mapped[Optional[str]]
+    house_number: Mapped[Optional[str]]
+    flat_number: Mapped[Optional[str]]
     is_banned: Mapped[bool] = mapped_column(default=False)
     is_volunteer: Mapped[bool] = mapped_column(default=False)
     is_admin: Mapped[bool] = mapped_column(default=False)
@@ -26,8 +36,9 @@ class User(Base):
 
 
 class UserView(ModelView):
-    column_list = ('telegram_id', 'username', 'phone_number', 'is_banned', 'is_volunteer')
-    form_columns = ('telegram_id', 'username', 'phone_number', 'is_banned', 'is_volunteer')
-    column_searchable_list = ['telegram_id', 'username', 'phone_number']
+    column_list = ('telegram_id', 'username', 'first_name', 'last_name', 'phone_number', 'is_banned', 'is_volunteer')
+    form_columns = ('telegram_id', 'username', 'phone_number', 'first_name', 'last_name',
+                    'birthday_date', 'region', 'city', 'street', 'house_number', 'flat_number', 'is_banned', 'is_volunteer')
+    column_searchable_list = ['telegram_id', 'username', 'phone_number', 'first_name', 'last_name',]
     column_filters = ['is_banned', 'is_admin']
     page_size = ADMIN_PANEL_PAGE_SIZE
