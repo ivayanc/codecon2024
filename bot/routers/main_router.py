@@ -136,7 +136,9 @@ async def process_validate_callback(call: CallbackQuery, state: FSMContext) -> N
             s.add(user_region)
             s.commit()
         text = ua_config.get('registration', 'registration_complete')
-        reply_markup = None
+        reply_markup = MainKeyboards.default_keyboard()
+        new_message = True
+        await state.clear()
 
     if new_message:
         await call.message.edit_reply_markup(reply_markup=None)

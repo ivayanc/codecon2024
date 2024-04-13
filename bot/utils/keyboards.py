@@ -18,7 +18,11 @@ class MainKeyboards:
         result_kb = ReplyKeyboardMarkup(
             keyboard=[
                 [
-                    KeyboardButton(text='Тут буде меню')
+                    KeyboardButton(text=ua_config.get('main_menu', 'ask_volunteer_help')),
+                    KeyboardButton(text=ua_config.get('main_menu', 'ask_government_help'))
+                ],
+                [
+                    KeyboardButton(text=ua_config.get('main_menu', 'request_evacuation'))
                 ]
             ],
             resize_keyboard=True
