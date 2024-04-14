@@ -7,6 +7,7 @@ from aiogram.enums.parse_mode import ParseMode
 from datetime import datetime, timedelta
 from celery import Celery
 from celery.schedules import crontab
+from bot.utils.keyboards import MainKeyboards, EvacuationKeyboards, RequestKeyboards
 
 from database.models.user import User
 from database.connector import session
@@ -38,6 +39,70 @@ async def async_accept_evacuation_request(volunteer_id, user_id):
 def accept_evacuation_request(volunteer_id, user_id):
     coro = async_accept_evacuation_request(volunteer_id, user_id)
     asyncio.run(coro)
+
+
+async def async_rate_evacuation_request(volunteer_id, user_id, request_id):
+    with session() as s:
+        volunteer = s.query(User).filter(User.telegram_id == volunteer_id).first()
+    if volunteer is None:
+        return
+    bot = Bot(BOT_TOKEN)
+    await bot.send_message(
+        chat_id=user_id,
+        text=ua_config.get('evacuation_prompts', 'volunteer_rating'),
+        reply_markup=EvacuationKeyboards.evacuation_rate_keyboard(request_id),
+        parse_mode=ParseMode.HTML
+    )
+
+
+@app.task
+def rate_evacuation_request(volunteer_id, user_id, request_id):
+    coro = async_rate_evacuation_request(volunteer_id, user_id, request_id)
+    asyncio.run(coro)
+
+
+async def async_accept_request(volunteer_id, user_id):
+    with session() as s:
+        volunteer = s.query(User).filter(User.telegram_id == volunteer_id).first()
+    if volunteer is None:
+        return
+    bot = Bot(BOT_TOKEN)
+    await bot.send_message(
+        chat_id=user_id,
+        text=ua_config.get('request_prompts', 'request_approved').format(
+            first_name=volunteer.first_name,
+            last_name=volunteer.last_name,
+            phone_number=volunteer.phone_number
+        ),
+        parse_mode=ParseMode.HTML
+    )
+
+
+@app.task
+def accept_request(volunteer_id, user_id):
+    coro = async_accept_request(volunteer_id, user_id)
+    asyncio.run(coro)
+
+
+async def async_rate_request(volunteer_id, user_id, request_id):
+    with session() as s:
+        volunteer = s.query(User).filter(User.telegram_id == volunteer_id).first()
+    if volunteer is None:
+        return
+    bot = Bot(BOT_TOKEN)
+    await bot.send_message(
+        chat_id=user_id,
+        text=ua_config.get('request_prompts', 'volunteer_rating'),
+        reply_markup=RequestKeyboards.request_rate_keyboard(request_id),
+        parse_mode=ParseMode.HTML
+    )
+
+
+@app.task
+def rate_request(volunteer_id, user_id, request_id):
+    coro = async_rate_request(volunteer_id, user_id, request_id)
+    asyncio.run(coro)
+
 
 # Optional configuration, see the application user guide.
 app.conf.update(

@@ -45,7 +45,7 @@ async def process_region_selection(call: CallbackQuery, state: FSMContext) -> No
             await state.update_data(phone_number=user.phone_number)
             await state.update_data(city=user.city)
             await state.update_data(street=user.street)
-            await state.update_data(house_number=user.house_number)
+            await state.update_data(home_number=user.house_number)
             await state.update_data(flat_number=user.flat_number)
             await state.update_data(region_id=user_region.region_id)
         await state.set_state(EvacuationForm.choose_evacuation_address)
@@ -269,3 +269,16 @@ async def process_any_special_needs(call: CallbackQuery, state: FSMContext) -> N
 async def process_special_needs(message: Message, state: FSMContext) -> None:
     await state.update_data(special_needs=message.text)
     await finish_request(message, state)
+
+
+@evacuation_router.callback_query(F.data.startswith('selectevacuationrate_'))
+async def process_rate_select(call: CallbackQuery) -> None:
+    _, request_id, rate = call.data.split('_')
+    request_id = int(request_id)
+    rate = int(rate)
+    await call.message.bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=ua_config.get('evacuation_prompts', 'volunteer_finish'),
+        reply_markup=None
+    )

@@ -60,7 +60,7 @@ async def handle_for_who_request_response(call: CallbackQuery, state: FSMContext
         await state.update_data(phone_number=user.phone_number)
         await state.update_data(city=user.city)
         await state.update_data(street=user.street)
-        await state.update_data(house_number=user.house_number)
+        await state.update_data(home_number=user.house_number)
         await state.update_data(flat_number=user.flat_number)
         await state.set_state(RequestForm.select_delivery_type)
         await call.message.bot.edit_message_text(
@@ -242,3 +242,16 @@ async def handle_request_text(message: Message, state: FSMContext):
         text=ua_config.get('request_prompts', 'request_submitted')
     )
     await state.clear()
+
+
+@request_router.callback_query(F.data.startswith('selectrequestrate_'))
+async def process_rate_select(call: CallbackQuery) -> None:
+    _, request_id, rate = call.data.split('_')
+    request_id = int(request_id)
+    rate = int(rate)
+    await call.message.bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=ua_config.get('request_prompts', 'volunteer_finish'),
+        reply_markup=None
+    )

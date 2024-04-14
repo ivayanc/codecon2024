@@ -90,6 +90,26 @@ class EvacuationKeyboards:
         ])
         return keyboard
 
+    @staticmethod
+    def evacuation_rate_keyboard(request_id):
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate1'),
+                                         callback_data=f'selectevacuationrate_{request_id}_1'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate2'),
+                                         callback_data=f'selectevacuationrate_{request_id}_2'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate3'),
+                                         callback_data=f'selectevacuationrate_{request_id}_3'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate4'),
+                                         callback_data=f'selectevacuationrate_{request_id}_4'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate5'),
+                                         callback_data=f'selectevacuationrate_{request_id}_5'),
+                ]
+            ],
+        )
+        return keyboard
+
 
 class RequestKeyboards:
 
@@ -126,6 +146,26 @@ class RequestKeyboards:
                                      callback_data='request_for_other'),
             ]
         ])
+        return keyboard
+
+    @staticmethod
+    def request_rate_keyboard(request_id):
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate1'),
+                                         callback_data=f'selectrequestrate_{request_id}_1'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate2'),
+                                         callback_data=f'selectrequestrate_{request_id}_2'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate3'),
+                                         callback_data=f'selectrequestrate_{request_id}_3'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate4'),
+                                         callback_data=f'selectrequestrate_{request_id}_4'),
+                    InlineKeyboardButton(text=ua_config.get('ratings', 'rate5'),
+                                         callback_data=f'selectrequestrate_{request_id}_5'),
+                ]
+            ],
+        )
         return keyboard
 
 
