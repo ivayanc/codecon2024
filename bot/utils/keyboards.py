@@ -125,3 +125,26 @@ class RequestKeyboards:
             ]
         ])
         return keyboard
+
+
+class GovernmentHelpKeyboards:
+    @staticmethod
+    def main_inline_keyboard():
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text=ua_config.get('government_help', 'first_option'), callback_data='first_option'),
+            ],
+            [
+                InlineKeyboardButton(text=ua_config.get('government_help', 'second_option'),
+                                     callback_data='second_option'),
+            ],
+            [
+                InlineKeyboardButton(text=ua_config.get('government_help', 'third_option'),
+                                     callback_data='third_option'),
+            ],
+            [
+                InlineKeyboardButton(text=ua_config.get('government_help', 'fourth_option'),
+                                     callback_data='fourth_option'),
+            ]
+        ])
+        return keyboard

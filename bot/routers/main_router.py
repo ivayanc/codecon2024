@@ -18,12 +18,14 @@ from database.models.region import Region
 
 from bot.routers.evacuation_router import evacuation_router
 from bot.routers.request_router import request_router
+from bot.routers.government_help_router import government_help_router
 
 from configuration import ua_config
 
 main_router = Router()
 main_router.include_router(request_router)
 main_router.include_router(evacuation_router)
+main_router.include_router(government_help_router)
 
 
 async def send_welcome_message(message: Message, edit_message: bool = False) -> None:
