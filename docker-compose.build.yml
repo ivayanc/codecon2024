@@ -32,6 +32,8 @@ services:
       - .:/bot
     ports:
       - "4000:4000"
+    expose:
+      - 5000
     depends_on:
       - bot
     env_file:
