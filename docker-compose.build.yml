@@ -30,8 +30,8 @@ services:
     image: bot-image:dev
     volumes:
       - .:/bot
-    expose:
-      - 5000
+    ports:
+      - "4000:4000"
     depends_on:
       - bot
     env_file:
@@ -46,7 +46,7 @@ services:
   db:
     image: postgres:12.0-alpine
     volumes:
-      - bot_db:/var/lib/postgresql/data/
+      - ./database:/var/lib/postgresql/data/
     expose:
       - 5432
 
