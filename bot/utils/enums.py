@@ -27,5 +27,5 @@ class RequestType(Enum):
     medical = 'Медична'
     clothing = 'Одяг'
     baby = 'Дитяча'
-    houshehold = 'Побутові товари'
+    household = 'Побутові товари'
     equipments = 'Техніка та інструменти'
