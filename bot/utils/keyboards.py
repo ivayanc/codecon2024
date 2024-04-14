@@ -80,10 +80,12 @@ class EvacuationKeyboards:
     def evacuation_for_who():
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_me'), callback_data='evacuation_for_me'),
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_me'),
+                                     callback_data='evacuation_for_me'),
             ],
             [
-                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_other'), callback_data='evacuation_for_other'),
+                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_other'),
+                                     callback_data='evacuation_for_other'),
             ]
         ])
         return keyboard
@@ -116,11 +118,11 @@ class RequestKeyboards:
     def request_for_who():
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_me'),
+                InlineKeyboardButton(text=ua_config.get('request_prompts', 'for_me'),
                                      callback_data='request_for_me'),
             ],
             [
-                InlineKeyboardButton(text=ua_config.get('evacuation_prompts', 'for_other'),
+                InlineKeyboardButton(text=ua_config.get('request_prompts', 'for_other'),
                                      callback_data='request_for_other'),
             ]
         ])
