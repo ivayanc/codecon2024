@@ -52,7 +52,9 @@ async def handle_for_who_request_response(call: CallbackQuery, state: FSMContext
     with session() as s:
         user = s.query(User).filter(User.telegram_id == user_id).first()
         user_region = s.query(UserRegion).filter(and_(UserRegion.user_id == user_id,
-                                                 UserRegion.volunteer_region == False)).first()
+                                                      UserRegion.volunteer_region == False)).first()
+        await state.update_data(region_id=user_region.region_id)
+    if call.data == 'request_for_me':
         await state.update_data(first_name=user.first_name)
         await state.update_data(last_name=user.last_name)
         await state.update_data(phone_number=user.phone_number)
@@ -60,18 +62,18 @@ async def handle_for_who_request_response(call: CallbackQuery, state: FSMContext
         await state.update_data(street=user.street)
         await state.update_data(house_number=user.house_number)
         await state.update_data(flat_number=user.flat_number)
-        await state.update_data(region_id=user_region.region_id)
-    if call.data == 'request_for_me':
         await state.set_state(RequestForm.select_delivery_type)
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('request_prompts', 'is_delivery'),
             reply_markup=RequestKeyboards.select_delivery_type()
         )
     else:
         await state.set_state(RequestForm.enter_contact_first_name)
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('request_prompts', 'enter_contact_first_name'),
             reply_markup=None
         )
@@ -117,15 +119,17 @@ async def enter_contact_phone_number(message: Message, state: FSMContext) -> Non
 async def handle_delivery_type(call: CallbackQuery, state: FSMContext):
     await state.update_data(is_delivery=True if call.data == 'delivery' else False)
     if call.data == 'delivery':
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('request_prompts', 'choose_request_address'),
             reply_markup=MainKeyboards.yes_no_keyboard()
         )
         await state.set_state(RequestForm.choose_request_address)
     else:
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('request_prompts', 'enter_request_text'),
             reply_markup=None
         )
@@ -136,16 +140,19 @@ async def handle_delivery_type(call: CallbackQuery, state: FSMContext):
 async def choose_request_address(call: CallbackQuery, state: FSMContext) -> None:
     if call.data == 'yes':
         await state.set_state(RequestForm.enter_request)
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('request_prompts', 'enter_request_text'),
             reply_markup=None
         )
     else:
         regions = await get_regions()
         await state.set_state(RequestForm.enter_request_region)
-        await call.message.reply(
-            ua_config.get('request_prompts', 'enter_request_region'),
+        await call.message.bot.edit_message_text(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            text=ua_config.get('request_prompts', 'enter_request_region'),
             reply_markup=MainKeyboards.region_keyboard(regions)
         )
 
@@ -154,8 +161,9 @@ async def choose_request_address(call: CallbackQuery, state: FSMContext) -> None
 async def enter_request_region(call: CallbackQuery, state: FSMContext):
     await state.update_data(region_id=int(call.data))
     await state.set_state(RequestForm.enter_request_city)
-    await call.message.bot.send_message(
+    await call.message.bot.edit_message_text(
         chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
         text=ua_config.get('request_prompts', 'enter_request_city'),
         reply_markup=None
     )

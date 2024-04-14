@@ -34,30 +34,32 @@ async def evacuation_handler(message: Message, state: FSMContext) -> None:
 
 @evacuation_router.callback_query(EvacuationForm.for_who_evacuation)
 async def process_region_selection(call: CallbackQuery, state: FSMContext) -> None:
-    user_id = call.from_user.id
-    with session() as s:
-        user = s.query(User).filter(User.telegram_id == user_id).first()
-        user_region = s.query(UserRegion).filter(and_(UserRegion.user_id == user_id,
-                                                 UserRegion.volunteer_region == False)).first()
-        await state.update_data(first_name=user.first_name)
-        await state.update_data(last_name=user.last_name)
-        await state.update_data(phone_number=user.phone_number)
-        await state.update_data(city=user.city)
-        await state.update_data(street=user.street)
-        await state.update_data(house_number=user.house_number)
-        await state.update_data(flat_number=user.flat_number)
-        await state.update_data(region_id=user_region.region_id)
     if call.data == 'evacuation_for_me':
+        user_id = call.from_user.id
+        with session() as s:
+            user = s.query(User).filter(User.telegram_id == user_id).first()
+            user_region = s.query(UserRegion).filter(and_(UserRegion.user_id == user_id,
+                                                          UserRegion.volunteer_region == False)).first()
+            await state.update_data(first_name=user.first_name)
+            await state.update_data(last_name=user.last_name)
+            await state.update_data(phone_number=user.phone_number)
+            await state.update_data(city=user.city)
+            await state.update_data(street=user.street)
+            await state.update_data(house_number=user.house_number)
+            await state.update_data(flat_number=user.flat_number)
+            await state.update_data(region_id=user_region.region_id)
         await state.set_state(EvacuationForm.choose_evacuation_address)
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('evacuation_prompts', 'choose_evacuation_address'),
             reply_markup=MainKeyboards.yes_no_keyboard()
         )
     else:
         await state.set_state(EvacuationForm.enter_contact_first_name)
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('evacuation_prompts', 'enter_contact_first_name'),
             reply_markup=None
         )
@@ -103,16 +105,19 @@ async def enter_contact_phone_number(message: Message, state: FSMContext) -> Non
 async def choose_evacuation_address(call: CallbackQuery, state: FSMContext) -> None:
     if call.data == 'yes':
         await state.set_state(EvacuationForm.enter_evacuation_qnt)
-        await call.message.bot.send_message(
+        await call.message.bot.edit_message_text(
             chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
             text=ua_config.get('evacuation_prompts', 'enter_evacuation_qnt'),
             reply_markup=None
         )
     else:
         regions = await get_regions()
         await state.set_state(EvacuationForm.enter_evacuation_region)
-        await call.message.reply(
-            ua_config.get('evacuation_prompts', 'enter_evacuation_region'),
+        await call.message.bot.edit_message_text(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            text=ua_config.get('evacuation_prompts', 'enter_evacuation_region'),
             reply_markup=MainKeyboards.region_keyboard(regions)
         )
 
@@ -121,8 +126,9 @@ async def choose_evacuation_address(call: CallbackQuery, state: FSMContext) -> N
 async def enter_evacuation_region(call: CallbackQuery, state: FSMContext):
     await state.update_data(region_id=int(call.data))
     await state.set_state(EvacuationForm.enter_evacuation_city)
-    await call.message.bot.send_message(
+    await call.message.bot.edit_message_text(
         chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
         text=ua_config.get('evacuation_prompts', 'enter_evacuation_city'),
         reply_markup=None
     )
