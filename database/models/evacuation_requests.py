@@ -8,6 +8,8 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from datetime import date, datetime
 from database.base import Base
+from database.models.region import Region
+from database.models.user import User
 from bot.utils.enums import EvacuationRequestStatus
 
 from configuration import ADMIN_PANEL_PAGE_SIZE
@@ -53,5 +55,5 @@ class EvacuationRequestView(ModelView):
     column_searchable_list = ['request_id', 'region_id', 'user_id', 'city', 'street', 'home_number',
                               'flat_number', 'contact_first_name', 'contact_last_name',
                               'contact_phone_number', 'evacuation_qnt', 'volunteer_id', 'request_status']
-    column_filters = ['request_status', 'request_date', 'evacuation_at', 'any_special_needs']
+    column_filters = ['request_status', 'request_date', 'evacuation_at', 'any_special_needs', 'region']
     page_size = ADMIN_PANEL_PAGE_SIZE
