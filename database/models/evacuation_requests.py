@@ -8,6 +8,8 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from datetime import date, datetime
 from database.base import Base
+from database.models.region import Region
+from database.models.user import User
 from bot.utils.enums import EvacuationRequestStatus
 
 from configuration import ADMIN_PANEL_PAGE_SIZE
@@ -27,6 +29,7 @@ class EvacuationRequest(Base):
     contact_first_name: Mapped[Optional[str]]
     contact_last_name: Mapped[Optional[str]]
     contact_phone_number: Mapped[Optional[str]]
+    evacuation_qnt: Mapped[int] = mapped_column(default=1)
     any_special_needs: Mapped[bool] = mapped_column(sa.Boolean(), default=False)
     special_needs: Mapped[Optional[str]]
     volunteer_id: Mapped[Optional[int]] = mapped_column(sa.BigInteger, sa.ForeignKey("users.telegram_id"))
@@ -41,16 +44,16 @@ class EvacuationRequest(Base):
 
 
 class EvacuationRequestView(ModelView):
-    column_list = ('request_id', 'region_id', 'user_id', 'city', 'street',
-                   'flat_number', 'contact_first_name', 'contact_last_name', 'contact_phone_number',
+    column_list = ('request_id', 'region_id', 'user_id', 'city', 'street', 'home_number',
+                   'flat_number', 'contact_first_name', 'contact_last_name', 'contact_phone_number', 'evacuation_qnt',
                    'volunteer_id', 'request_status', 'any_special_needs', 'special_needs',
                    'request_date', 'evacuation_at')
-    form_columns = ('request_id', 'region_id', 'user_id', 'city', 'street', 'home_number',
+    form_columns = ('request_id', 'region_id', 'user_id', 'city', 'street', 'home_number', 'evacuation_qnt',
                     'flat_number', 'contact_first_name', 'contact_last_name',
                     'contact_phone_number', 'volunteer_id', 'request_status', 'any_special_needs', 'special_needs',
                     'request_date', 'evacuation_at')
     column_searchable_list = ['request_id', 'region_id', 'user_id', 'city', 'street', 'home_number',
                               'flat_number', 'contact_first_name', 'contact_last_name',
-                              'contact_phone_number', 'volunteer_id', 'request_status']
-    column_filters = ['request_status', 'request_date', 'evacuation_at', 'any_special_needs']
+                              'contact_phone_number', 'evacuation_qnt', 'volunteer_id', 'request_status']
+    column_filters = ['request_status', 'request_date', 'evacuation_at', 'any_special_needs', 'region']
     page_size = ADMIN_PANEL_PAGE_SIZE
